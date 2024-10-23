@@ -1,5 +1,3 @@
-// src/components/TaskList.js
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -20,26 +18,13 @@ const TaskList = () => {
     due_date: '',
     priority: '',
     category: '',
-    state: 'Open',
+    state: '', // Default state should be empty initially
   });
   const [editTask, setEditTask] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate(); // Use navigate to redirect to login if needed
-
-  // Ref to track initial render
   const isFirstRender = useRef(true);
-
-  // Fetch users (not used but retained for future use)
-  const fetchUsers = async () => {
-    try {
-      const response = await api.get('/accounts/users/');
-      const users = response.data;
-      // You can set the users state here if needed
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
 
   useEffect(() => {
     let isCancelled = false;
@@ -47,14 +32,9 @@ const TaskList = () => {
     const initialize = async () => {
       if (isFirstRender.current) {
         isFirstRender.current = false;
-        await fetchUsers();
-        if (!isCancelled) {
-          await fetchTasks(true);
-        }
+        await fetchTasks(true);
       } else {
-        if (!isCancelled) {
-          await fetchTasks(true);
-        }
+        await fetchTasks(true);
       }
     };
 
@@ -65,7 +45,6 @@ const TaskList = () => {
     };
   }, [filter, search]);
 
-  // Token check function
   const checkToken = () => {
     const token = localStorage.getItem('access_token');
     if (!token) {
@@ -153,7 +132,7 @@ const TaskList = () => {
       due_date: newTask.due_date,
       priority: newTask.priority,
       category: newTask.category,
-      state: newTask.state,
+      state: newTask.state, // Ensure state is included
     };
 
     try {
@@ -173,7 +152,7 @@ const TaskList = () => {
         due_date: '',
         priority: '',
         category: '',
-        state: 'Open',
+        state: '', // Reset to empty
       });
 
       // Fetch the updated task list after creating a new task
@@ -192,8 +171,15 @@ const TaskList = () => {
 
     if (!checkToken()) return; // Ensure token is valid before updating
 
+    const updatedTaskData = {
+      ...editTask, // Spread the current state including state
+    };
+
+    console.log('Updating task data:', updatedTaskData); // Log data being sent
+
     try {
-      const response = await api.put(`/tasks/tasks/${editTask.id}/`, editTask);
+      const response = await api.put(`/tasks/tasks/${editTask.id}/`, updatedTaskData);
+      console.log('Task updated successfully:', response.data);
       setTasks(tasks.map((task) => (task.id === editTask.id ? response.data : task)));
       handleEditClose();
       setEditTask(null);
@@ -255,6 +241,7 @@ const TaskList = () => {
           onChange={handleFilterChange}
           className="me-2 mb-2"
           aria-label="Filter by Category"
+          required
         >
           <option value="">All Categories</option>
           <option value="Work">Work</option>
@@ -267,6 +254,7 @@ const TaskList = () => {
           onChange={handleFilterChange}
           className="me-2 mb-2"
           aria-label="Filter by Priority"
+          required
         >
           <option value="">All Priorities</option>
           <option value="Low">Low</option>
@@ -279,9 +267,10 @@ const TaskList = () => {
           onChange={handleFilterChange}
           className="me-2 mb-2"
           aria-label="Filter by State"
+          required
         >
           <option value="">All States</option>
-          <option value="Open">Open</option>
+          <option value="To-Do">To-Do</option>
           <option value="In Progress">In Progress</option>
           <option value="Done">Done</option>
         </Form.Select>
@@ -426,7 +415,8 @@ const TaskList = () => {
                 onChange={handleChange}
                 required
               >
-                <option value="Open">Open</option>
+                <option value="">Select State</option>
+                <option value="To-Do">To-Do</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Done">Done</option>
               </Form.Select>
@@ -505,6 +495,7 @@ const TaskList = () => {
                   onChange={handleEditChange}
                   required
                 >
+                  <option value="">Select Category</option>
                   <option value="Work">Work</option>
                   <option value="Personal">Personal</option>
                   <option value="Others">Others</option>
@@ -519,7 +510,8 @@ const TaskList = () => {
                   onChange={handleEditChange}
                   required
                 >
-                  <option value="Open">Open</option>
+                  <option value="">Select State</option>
+                  <option value="To-Do">To-Do</option>
                   <option value="In Progress">In Progress</option>
                   <option value="Done">Done</option>
                 </Form.Select>
