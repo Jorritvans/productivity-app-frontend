@@ -1,15 +1,16 @@
 // src/api.js
 
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
-const API_BASE_URL = 'https://8000-jorritvans-productivity-9zhpc5cokwg.ws.codeinstitute-ide.net/api'; // Updated base URL to include /api
+const API_BASE_URL = 'https://8000-jorritvans-productivity-9zhpc5cokwg.ws.codeinstitute-ide.net/api'; // Base URL
 
 const api = axios.create({
-  baseURL: API_BASE_URL, // Updated base URL
+  baseURL: API_BASE_URL, // Base URL
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // This ensures credentials (cookies/tokens) are sent
+  withCredentials: true, // Ensures credentials (cookies/tokens) are sent
 });
 
 // Interceptor to add Authorization header
@@ -42,7 +43,7 @@ api.interceptors.response.use(
 
         // Use full URL for refresh token request to handle CORS
         const { data } = await axios.post(
-          `${API_BASE_URL}/token/refresh/`,  // Full URL
+          `${API_BASE_URL}/token/refresh/`, // Full URL
           { refresh: refreshToken },
           {
             headers: {
@@ -57,7 +58,10 @@ api.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+
+        // Dispatch the sessionExpired event
         window.dispatchEvent(new Event('sessionExpired'));
+
         return Promise.reject(refreshError);
       }
     }

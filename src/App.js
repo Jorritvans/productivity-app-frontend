@@ -36,6 +36,10 @@ function App() {
     window.location.href = '/login'; // Redirect to login on logout
   };
 
+  const handleSessionModalClose = () => {
+    handleLogout(); // Logout and redirect to login page when the user clicks "OK"
+  };
+
   return (
     <>
       <Router>
@@ -94,12 +98,7 @@ function App() {
           </Modal.Header>
           <Modal.Body>Your session has expired. Please log in again.</Modal.Body>
           <Modal.Footer>
-            <Button
-              variant="primary"
-              onClick={() => {
-                handleLogout();
-              }}
-            >
+            <Button variant="primary" onClick={handleSessionModalClose}>
               OK
             </Button>
           </Modal.Footer>

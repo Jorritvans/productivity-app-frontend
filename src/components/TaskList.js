@@ -5,6 +5,7 @@ import api from '../api';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Container, Button, Modal, Form, Badge } from 'react-bootstrap';
 import { debounce } from 'lodash';
+import { useNavigate } from 'react-router-dom'; // For navigation
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -24,10 +25,12 @@ const TaskList = () => {
   const [editTask, setEditTask] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const navigate = useNavigate(); // Use navigate to redirect to login if needed
+
   // Ref to track initial render
   const isFirstRender = useRef(true);
 
-  // Fetch users (note: this function isn't used but kept here in case it's needed later)
+  // Fetch users (not used but retained for future use)
   const fetchUsers = async () => {
     try {
       const response = await api.get('/accounts/users/');
@@ -62,6 +65,17 @@ const TaskList = () => {
     };
   }, [filter, search]);
 
+  // Token check function
+  const checkToken = () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      window.dispatchEvent(new Event('sessionExpired')); // Trigger session expired event
+      navigate('/login'); // Redirect to login immediately
+      return false; // Invalid session
+    }
+    return true; // Valid session
+  };
+
   const fetchTasks = async (reset = false) => {
     setIsLoading(true);
     try {
@@ -73,11 +87,9 @@ const TaskList = () => {
         },
       };
 
-      console.log('Fetching tasks with config:', config);
+      if (!checkToken()) return; // Ensure token is valid before proceeding
 
       const response = await api.get('/tasks/tasks/', config);
-      console.log('Fetched tasks:', response.data);
-
       if (response.status === 200 && Array.isArray(response.data)) {
         if (reset) {
           setTasks(response.data);
@@ -94,7 +106,7 @@ const TaskList = () => {
     } catch (error) {
       console.error('Error fetching tasks:', error.response || error.message);
       if (error.response && error.response.status === 401) {
-        alert('Authorization failed. Please log in again.');
+        window.dispatchEvent(new Event('sessionExpired')); // Show session expired notification
         window.location.href = '/login';
       }
     } finally {
@@ -133,29 +145,26 @@ const TaskList = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Using the `newTask` state object to submit the task data
+    if (!checkToken()) return; // Ensure token is valid before submitting
+
     const taskData = {
-      title: newTask.title, // Grab the title from the state
-      description: newTask.description, // Grab the description from the state
-      due_date: newTask.due_date, // Grab the due date from the state
-      priority: newTask.priority, // Grab the priority from the state
-      category: newTask.category, // Grab the category from the state
-      state: newTask.state, // Grab the state from the state
+      title: newTask.title,
+      description: newTask.description,
+      due_date: newTask.due_date,
+      priority: newTask.priority,
+      category: newTask.category,
+      state: newTask.state,
     };
 
     try {
-      const response = await api.post(
-        'https://8000-jorritvans-productivity-9zhpc5cokwg.ws.codeinstitute-ide.net/api/tasks/tasks/',
-        taskData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`, // Ensure token is available
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await api.post('/tasks/tasks/', taskData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`, // Ensure token is available
+          'Content-Type': 'application/json',
+        },
+      });
       console.log('Task created successfully:', response.data);
-      
+
       // Close modal after successful task creation and clear the form
       setShowModal(false);
       setNewTask({
@@ -171,11 +180,18 @@ const TaskList = () => {
       await fetchTasks(true);
     } catch (error) {
       console.error('Error creating task:', error.response?.data || error.message);
+      if (error.response && error.response.status === 401) {
+        window.dispatchEvent(new Event('sessionExpired')); // Show session expired notification
+        window.location.href = '/login';
+      }
     }
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    if (!checkToken()) return; // Ensure token is valid before updating
+
     try {
       const response = await api.put(`/tasks/tasks/${editTask.id}/`, editTask);
       setTasks(tasks.map((task) => (task.id === editTask.id ? response.data : task)));
@@ -184,7 +200,7 @@ const TaskList = () => {
     } catch (error) {
       console.error('Error updating task:', error.response || error.message);
       if (error.response && error.response.status === 401) {
-        alert('Authorization failed. Please log in again.');
+        window.dispatchEvent(new Event('sessionExpired')); // Show session expired notification
         window.location.href = '/login';
       }
     }
@@ -201,11 +217,13 @@ const TaskList = () => {
   const handleEditClose = () => setShowEditModal(false);
 
   const handleDelete = async (id) => {
+    if (!checkToken()) return; // Ensure token is valid before deleting
+
     if (!window.confirm('Are you sure you want to delete this task?')) return;
-  
+
     try {
-      const response = await api.delete(`/tasks/tasks/${id}/`);  // Dynamically use the correct ID
-      if (response.status === 204) {  // 204 means success
+      const response = await api.delete(`/tasks/tasks/${id}/`); // Dynamically use the correct ID
+      if (response.status === 204) {
         setTasks(tasks.filter((task) => task.id !== id));
         console.log(`Task ${id} deleted successfully`);
       } else {
@@ -213,10 +231,14 @@ const TaskList = () => {
       }
     } catch (error) {
       console.error('Error deleting task:', error.response?.data || error.message);
-      alert('Failed to delete task. Please try again.');
+      if (error.response && error.response.status === 401) {
+        window.dispatchEvent(new Event('sessionExpired')); // Show session expired notification
+        window.location.href = '/login';
+      } else {
+        alert('Failed to delete task. Please try again.');
+      }
     }
   };
-  
 
   return (
     <Container className="mt-4">
@@ -483,7 +505,6 @@ const TaskList = () => {
                   onChange={handleEditChange}
                   required
                 >
-                  <option value="">Select Category</option>
                   <option value="Work">Work</option>
                   <option value="Personal">Personal</option>
                   <option value="Others">Others</option>
