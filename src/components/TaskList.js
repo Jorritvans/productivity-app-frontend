@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Container, Button, Form, Badge } from 'react-bootstrap';
-import { debounce } from 'lodash';
+import { Container, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import TaskModal from './TaskModal';
+import TaskFilters from './TaskFilters'; // Import TaskFilters
+import TaskItem from './TaskItem'; // Import TaskItem
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -91,15 +92,8 @@ const TaskList = () => {
     });
   };
 
-  const debouncedSetSearch = useCallback(
-    debounce((value) => {
-      setSearch(value);
-    }, 500),
-    []
-  );
-
-  const handleSearchChange = (e) => {
-    debouncedSetSearch(e.target.value);
+  const handleSearchChange = (value) => {
+    setSearch(value);
   };
 
   const handleShow = () => {
@@ -141,30 +135,6 @@ const TaskList = () => {
     }
   };
 
-  const handleQuickEdit = async (taskId, newState) => {
-    if (!checkToken()) return;
-
-    try {
-      const updatedTask = { ...tasks.find((task) => task.id === taskId), state: newState };
-      const response = await api.put(`/tasks/tasks/${taskId}/`, updatedTask);
-
-      // Update tasks state only if the task meets the current filter
-      if (!filter.state || filter.state === newState) {
-        setTasks(tasks.map((task) => (task.id === taskId ? response.data : task)));
-      } else {
-        // Remove the task if it doesn't meet the current filter
-        setTasks(tasks.filter((task) => task.id !== taskId));
-      }
-      console.log('Task updated successfully:', response.data);
-    } catch (error) {
-      console.error('Error updating task:', error.response || error.message);
-      if (error.response && error.response.status === 401) {
-        window.dispatchEvent(new Event('sessionExpired'));
-        navigate('/login');
-      }
-    }
-  };
-
   return (
     <Container className="mt-4">
       <h2>Task List</h2>
@@ -172,54 +142,8 @@ const TaskList = () => {
         Add Task
       </Button>
 
-      {/* Filters */}
-      <div className="filters mb-3 d-flex flex-wrap">
-        <Form.Select
-          name="category"
-          value={filter.category}
-          onChange={handleFilterChange}
-          className="me-2 mb-2"
-          aria-label="Filter by Category"
-        >
-          <option value="">All Categories</option>
-          <option value="Work">Work</option>
-          <option value="Personal">Personal</option>
-          <option value="Others">Others</option>
-        </Form.Select>
-        <Form.Select
-          name="priority"
-          value={filter.priority}
-          onChange={handleFilterChange}
-          className="me-2 mb-2"
-          aria-label="Filter by Priority"
-        >
-          <option value="">All Priorities</option>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </Form.Select>
-        <Form.Select
-          name="state"
-          value={filter.state}
-          onChange={handleFilterChange}
-          className="me-2 mb-2"
-          aria-label="Filter by State"
-        >
-          <option value="">All States</option>
-          <option value="To-Do">To-Do</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Done">Done</option>
-        </Form.Select>
-      </div>
-
-      {/* Search */}
-      <Form.Control
-        type="text"
-        placeholder="Search tasks"
-        defaultValue={search}
-        onChange={handleSearchChange}
-        className="mb-3"
-      />
+      {/* Task Filters */}
+      <TaskFilters setFilter={setFilter} setSearch={handleSearchChange} />
 
       {/* Infinite Scroll */}
       <InfiniteScroll
@@ -231,34 +155,12 @@ const TaskList = () => {
       >
         <ul className="list-group">
           {tasks.map((task) => (
-            <li key={task.id} className="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <h5>{task.title}</h5>
-                <p>
-                  Due: {task.due_date} | Priority: 
-                  <Badge bg={task.priority === 'High' ? 'danger' : task.priority === 'Medium' ? 'warning' : 'success'}>
-                    {task.priority}
-                  </Badge> | Category: {task.category} | State: 
-                  <select 
-                    value={task.state} 
-                    onChange={(e) => handleQuickEdit(task.id, e.target.value)}
-                    style={{ marginLeft: '5px' }}
-                  >
-                    <option value="To-Do">To-Do</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Done">Done</option>
-                  </select>
-                </p>
-              </div>
-              <div>
-                <Button variant="secondary" size="sm" onClick={() => handleEditShow(task)} className="me-2">
-                  Edit
-                </Button>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(task.id)}>
-                  Delete
-                </Button>
-              </div>
-            </li>
+            <TaskItem
+              key={task.id}
+              task={task}
+              onEdit={handleEditShow}
+              onDelete={handleDelete}
+            />
           ))}
         </ul>
       </InfiniteScroll>

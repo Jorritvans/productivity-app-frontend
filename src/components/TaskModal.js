@@ -1,4 +1,3 @@
-// src/components/TaskModal.js
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import api from '../api';
@@ -12,10 +11,9 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
     due_date: '',
     priority: '',
     category: '',
-    state: '', // Default state for new tasks
+    state: '',
   });
 
-  // UseEffect to populate form data when editing
   useEffect(() => {
     if (isEditMode && task) {
       setFormData({
@@ -49,16 +47,13 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
 
     try {
       if (isEditMode) {
-        // Edit task
         await api.put(`/tasks/tasks/${task.id}/`, formData);
         console.log('Task updated successfully:', formData);
       } else {
-        // Create new task
         await api.post('/tasks/tasks/', formData);
         console.log('Task created successfully:', formData);
       }
 
-      // Refresh the task list and close the modal
       await fetchTasks(true);
       onHide();
     } catch (error) {
@@ -146,7 +141,7 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
               onChange={handleChange}
               required
             >
-              <option value="">Select Category</option>
+              <option value="">Select State</option>
               <option value="To-Do">To-Do</option>
               <option value="In Progress">In Progress</option>
               <option value="Done">Done</option>
