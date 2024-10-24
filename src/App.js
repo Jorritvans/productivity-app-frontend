@@ -1,5 +1,3 @@
-// src/App.js
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Navbar, Nav, Container, Modal, Button } from 'react-bootstrap';
@@ -43,7 +41,8 @@ function App() {
   return (
     <>
       <Router>
-        <Navbar bg="dark" variant="dark" expand="lg">
+        <Navbar className="custom-navbar" expand="lg"
+        >
           <Container>
             <Navbar.Brand href="/">ProductivityApp</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />

@@ -1,38 +1,148 @@
+/* App.css */
+.custom-navbar {
+  background-color: rgb(86, 200, 226);
+}
+
+.navbar-nav .nav-link {
+  font-size: 1.2rem; /* Increase size for the navbar links */
+  font-weight: bold; /* Make text bold */
+  color: #333; /* Darker text color (adjust as needed) */
+}
+
+.navbar-nav .nav-link:hover {
+  color: white; /* Change color on hover (Bootstrap primary color) */
+}
+
+.navbar-brand {
+  font-size: 1.5rem; /* Increase size for the brand */
+  font-weight: bold; /* Make text bold */
+  color: #333; /* Darker text color (adjust as needed) */
+}
+
+.add-task-button {
+  color: rgb(86, 200, 226);
+}
+
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h2 {
+  margin: 20px 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.filters {
+  margin: 20px 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  gap: 10px; /* Space between filters */
+}
+
+.filters select,
+.filters input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc; /* Light border for inputs */
+}
+
+.filters select:focus,
+.filters input:focus {
+  outline: none;
+  border-color:  rgb(86, 200, 226); /* Highlight border on focus */
+}
+
+.list-group {
+  list-style: none;
+  padding: 0;
+}
+
+.list-group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  background-color: white; /* Keep task items white for contrast */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  transition: all 0.3s ease; /* Smooth transition */
+}
+
+.list-group-item:hover {
+  transform: translateY(-2px); /* Lift effect on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+.button {
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.button-primary {
+  background-color:  rgb(86, 200, 226);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.button-secondary {
+  background-color: #6c757d;
+  color: white;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.button-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.button:hover {
+  opacity: 0.9; /* Slightly dim the button on hover */
+}
+
+/* Task Modal Styles */
+.modal-header {
+  background-color:  rgb(86, 200, 226); /* Match the navbar */
+  color: white;
+}
+
+.modal-body {
+  background-color: #f4f7fa;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Custom style for Add Task button */
+.btn-custom {
+  background-color: rgb(86, 200, 226); /* Change the background color */
+  color: white; /* Change the text color */
+  border: none; /* Remove any border */
+}
+
+/* Optional: Add hover effect */
+.btn-custom:hover {
+  background-color: rgb(70, 180, 210); /* Slightly darker shade on hover */
+  color: white;
+  opacity: 0.9; /* Make it a little transparent on hover */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column; /* Stack filters on small screens */
+    align-items: center;
   }
-  to {
-    transform: rotate(360deg);
+
+  .filters select,
+  .filters input {
+    width: 100%; /* Full width on smaller screens */
+    margin-bottom: 10px; /* Space between stacked items */
+  }
+
+  .list-group-item {
+    flex-direction: column; /* Stack content vertically */
+    align-items: flex-start; /* Align items to the start */
   }
 }

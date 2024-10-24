@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import api from '../api';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Container, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import TaskModal from './TaskModal';
-import TaskFilters from './TaskFilters'; // Import TaskFilters
-import TaskItem from './TaskItem'; // Import TaskItem
+import TaskFilters from './TaskFilters';
+import TaskItem from './TaskItem';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -84,6 +84,31 @@ const TaskList = () => {
     }
   };
 
+  const handleQuickEdit = async (taskId, newState) => {
+    try {
+      const updatedTask = tasks.find((task) => task.id === taskId);
+      if (updatedTask) {
+        updatedTask.state = newState;
+
+        // Send the updated state to the backend
+        await api.put(`/tasks/tasks/${taskId}/`, updatedTask);
+
+        // Update the tasks in state, only keeping the tasks that meet the filter
+        if (!filter.state || filter.state === newState) {
+          setTasks((prevTasks) =>
+            prevTasks.map((task) => (task.id === taskId ? updatedTask : task))
+          );
+        } else {
+          // If the task doesn't meet the current filter criteria, remove it from the list
+          setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+        }
+        console.log('Task updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating task:', error.response || error.message);
+    }
+  };
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilter((prevFilter) => {
@@ -138,7 +163,8 @@ const TaskList = () => {
   return (
     <Container className="mt-4">
       <h2>Task List</h2>
-      <Button variant="primary" onClick={handleShow} className="mb-3">
+      {/* Add Task Button with Custom Class */}
+      <Button variant="primary" onClick={handleShow} className="mb-3 btn-custom">
         Add Task
       </Button>
 
@@ -160,6 +186,7 @@ const TaskList = () => {
               task={task}
               onEdit={handleEditShow}
               onDelete={handleDelete}
+              onQuickEdit={handleQuickEdit} // Pass handleQuickEdit
             />
           ))}
         </ul>
