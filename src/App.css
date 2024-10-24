@@ -10,7 +10,8 @@
 }
 
 .navbar-nav .nav-link:hover {
-  color: white; /* Change color on hover (Bootstrap primary color) */
+  color: white;
+  text-decoration: underline;
 }
 
 .navbar-brand {
@@ -102,7 +103,6 @@ h2 {
 /* Task Modal Styles */
 .modal-header {
   background-color:  rgb(86, 200, 226); /* Match the navbar */
-  color: white;
 }
 
 .modal-body {
@@ -126,6 +126,36 @@ h2 {
   background-color: rgb(70, 180, 210); /* Slightly darker shade on hover */
   color: white;
   opacity: 0.9; /* Make it a little transparent on hover */
+}
+
+.btn-primary {
+  background-color: rgb(86, 200, 226) !important;
+  border-color: rgb(86, 200, 226) !important;
+}
+
+.btn-primary:hover {
+  background-color: rgb(76, 180, 206) !important;
+  border-color: rgb(76, 180, 206) !important;
+}
+
+.btn-primary:active {
+  background-color: rgb(66, 170, 196) !important;
+  border-color: rgb(66, 170, 196) !important;
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 0.25rem rgba(49, 132, 153, 0.5) !important;
+}
+
+.btn-custom-blue {
+  background-color: rgb(86, 200, 226) !important;
+  border-color: rgb(86, 200, 226) !important;
+  color: #fff !important;
+}
+
+.btn-custom-blue:hover {
+  background-color: rgb(66, 180, 206) !important; /* Slightly darker shade for hover */
+  border-color: rgb(66, 180, 206) !important;
 }
 
 /* Responsive Styles */

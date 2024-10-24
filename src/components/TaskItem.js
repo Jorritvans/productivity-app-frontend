@@ -32,7 +32,7 @@ const TaskItem = ({ task, onEdit, onDelete, onQuickEdit }) => {
         </p>
       </div>
       <div>
-        <Button variant="secondary" size="sm" onClick={() => onEdit(task)} className="me-2">
+        <Button variant="custom-blue" size="sm" onClick={() => onEdit(task)} className="me-2 btn-custom-blue">
           Edit
         </Button>
         <Button variant="danger" size="sm" onClick={() => onDelete(task.id)}>
