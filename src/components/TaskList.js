@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Container, Button, Modal, Form, Badge } from 'react-bootstrap';
+import { Container, Button, Form, Badge } from 'react-bootstrap';
 import { debounce } from 'lodash';
-import { useNavigate } from 'react-router-dom'; // For navigation
-import TaskModal from './TaskModal'; // Import the TaskModal component
+import { useNavigate } from 'react-router-dom';
+import TaskModal from './TaskModal';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -16,7 +16,7 @@ const TaskList = () => {
   const [editTask, setEditTask] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate(); // Use navigate to redirect to login if needed
+  const navigate = useNavigate();
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -35,11 +35,11 @@ const TaskList = () => {
   const checkToken = () => {
     const token = localStorage.getItem('access_token');
     if (!token) {
-      window.dispatchEvent(new Event('sessionExpired')); // Trigger session expired event
-      navigate('/login'); // Redirect to login immediately
-      return false; // Invalid session
+      window.dispatchEvent(new Event('sessionExpired'));
+      navigate('/login');
+      return false;
     }
-    return true; // Valid session
+    return true;
   };
 
   const fetchTasks = async (reset = false) => {
@@ -53,7 +53,7 @@ const TaskList = () => {
         },
       };
 
-      if (!checkToken()) return; // Ensure token is valid before proceeding
+      if (!checkToken()) return;
 
       const response = await api.get('/tasks/tasks/', config);
       if (response.status === 200 && Array.isArray(response.data)) {
@@ -62,9 +62,12 @@ const TaskList = () => {
           setPage(2);
           setHasMore(response.data.length > 0);
         } else {
-          setTasks((prevTasks) => [...prevTasks, ...response.data]);
+          const uniqueTasks = response.data.filter(
+            (newTask) => !tasks.some((task) => task.id === newTask.id)
+          );
+          setTasks((prevTasks) => [...prevTasks, ...uniqueTasks]);
           setPage((prevPage) => prevPage + 1);
-          setHasMore(response.data.length > 0);
+          setHasMore(uniqueTasks.length > 0);
         }
       } else {
         console.error('Unexpected response structure:', response.data);
@@ -72,7 +75,7 @@ const TaskList = () => {
     } catch (error) {
       console.error('Error fetching tasks:', error.response || error.message);
       if (error.response && error.response.status === 401) {
-        window.dispatchEvent(new Event('sessionExpired')); // Show session expired notification
+        window.dispatchEvent(new Event('sessionExpired'));
         navigate('/login');
       }
     } finally {
@@ -83,12 +86,11 @@ const TaskList = () => {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilter((prevFilter) => {
-      if (prevFilter[name] === value) return prevFilter; // No change
+      if (prevFilter[name] === value) return prevFilter;
       return { ...prevFilter, [name]: value };
     });
   };
 
-  // Debounce search input to prevent rapid calls
   const debouncedSetSearch = useCallback(
     debounce((value) => {
       setSearch(value);
@@ -102,7 +104,7 @@ const TaskList = () => {
 
   const handleShow = () => {
     setShowModal(true);
-    setEditTask(null); // Reset edit task when showing add modal
+    setEditTask(null);
   };
 
   const handleEditShow = (task) => {
@@ -116,12 +118,12 @@ const TaskList = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!checkToken()) return; // Ensure token is valid before deleting
+    if (!checkToken()) return;
 
     if (!window.confirm('Are you sure you want to delete this task?')) return;
 
     try {
-      const response = await api.delete(`/tasks/tasks/${id}/`); // Dynamically use the correct ID
+      const response = await api.delete(`/tasks/tasks/${id}/`);
       if (response.status === 204) {
         setTasks(tasks.filter((task) => task.id !== id));
         console.log(`Task ${id} deleted successfully`);
@@ -131,10 +133,34 @@ const TaskList = () => {
     } catch (error) {
       console.error('Error deleting task:', error.response?.data || error.message);
       if (error.response && error.response.status === 401) {
-        window.dispatchEvent(new Event('sessionExpired')); // Show session expired notification
+        window.dispatchEvent(new Event('sessionExpired'));
         navigate('/login');
       } else {
         alert('Failed to delete task. Please try again.');
+      }
+    }
+  };
+
+  const handleQuickEdit = async (taskId, newState) => {
+    if (!checkToken()) return;
+
+    try {
+      const updatedTask = { ...tasks.find((task) => task.id === taskId), state: newState };
+      const response = await api.put(`/tasks/tasks/${taskId}/`, updatedTask);
+
+      // Update tasks state only if the task meets the current filter
+      if (!filter.state || filter.state === newState) {
+        setTasks(tasks.map((task) => (task.id === taskId ? response.data : task)));
+      } else {
+        // Remove the task if it doesn't meet the current filter
+        setTasks(tasks.filter((task) => task.id !== taskId));
+      }
+      console.log('Task updated successfully:', response.data);
+    } catch (error) {
+      console.error('Error updating task:', error.response || error.message);
+      if (error.response && error.response.status === 401) {
+        window.dispatchEvent(new Event('sessionExpired'));
+        navigate('/login');
       }
     }
   };
@@ -198,42 +224,34 @@ const TaskList = () => {
       {/* Infinite Scroll */}
       <InfiniteScroll
         dataLength={tasks.length}
-        next={() => fetchTasks(false)} // Load more tasks
+        next={() => fetchTasks(false)}
         hasMore={hasMore}
         loader={isLoading ? <h4>Loading...</h4> : null}
         endMessage={!isLoading && <p>No more tasks</p>}
       >
         <ul className="list-group">
-          {tasks.map((task, index) => (
-            <li
-              key={`${task.id}-${index}`}
-              className="list-group-item d-flex justify-content-between align-items-center"
-            >
+          {tasks.map((task) => (
+            <li key={task.id} className="list-group-item d-flex justify-content-between align-items-center">
               <div>
                 <h5>{task.title}</h5>
                 <p>
-                  Due: {task.due_date} | Priority:{' '}
-                  <Badge
-                    bg={
-                      task.priority === 'High'
-                        ? 'danger'
-                        : task.priority === 'Medium'
-                        ? 'warning'
-                        : 'success'
-                    }
-                  >
+                  Due: {task.due_date} | Priority: 
+                  <Badge bg={task.priority === 'High' ? 'danger' : task.priority === 'Medium' ? 'warning' : 'success'}>
                     {task.priority}
-                  </Badge>{' '}
-                  | Category: {task.category} | State: {task.state}
+                  </Badge> | Category: {task.category} | State: 
+                  <select 
+                    value={task.state} 
+                    onChange={(e) => handleQuickEdit(task.id, e.target.value)}
+                    style={{ marginLeft: '5px' }}
+                  >
+                    <option value="To-Do">To-Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                  </select>
                 </p>
               </div>
               <div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => handleEditShow(task)}
-                  className="me-2"
-                >
+                <Button variant="secondary" size="sm" onClick={() => handleEditShow(task)} className="me-2">
                   Edit
                 </Button>
                 <Button variant="danger" size="sm" onClick={() => handleDelete(task.id)}>
@@ -246,12 +264,7 @@ const TaskList = () => {
       </InfiniteScroll>
 
       {/* Modal for Task Operations */}
-      <TaskModal
-        show={showModal}
-        onHide={handleEditClose}
-        task={editTask}
-        fetchTasks={fetchTasks}
-      />
+      <TaskModal show={showModal} onHide={handleEditClose} task={editTask} fetchTasks={fetchTasks} />
     </Container>
   );
 };
