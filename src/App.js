@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'; // Import useNavigate here
 import { Navbar, Nav, Container, Modal, Button } from 'react-bootstrap';
 
 import Login from './components/Login';
@@ -9,6 +9,7 @@ import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   const [sessionExpired, setSessionExpired] = useState(false);
+  const navigate = useNavigate();
 
   const isAuthenticated = () => {
     const token = localStorage.getItem('access_token');
@@ -31,7 +32,7 @@ function App() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setSessionExpired(false);
-    window.location.href = '/login'; // Redirect to login on logout
+    navigate('/login', { replace: true }); // Navigate without page reload
   };
 
   const handleSessionModalClose = () => {
@@ -40,54 +41,51 @@ function App() {
 
   return (
     <>
-      <Router>
-        <Navbar className="custom-navbar" expand="lg"
-        >
-          <Container>
-            <Navbar.Brand href="/">ProductivityApp</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="ms-auto">
-                {isAuthenticated() ? (
-                  <>
-                    <Nav.Link href="/tasks">Tasks</Nav.Link>
-                    <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                  </>
-                ) : (
-                  <>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                    <Nav.Link href="/register">Register</Nav.Link>
-                  </>
-                )}
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
+      <Navbar className="custom-navbar" expand="lg">
+        <Container>
+          <Navbar.Brand href="/">ProductivityApp</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ms-auto">
+              {isAuthenticated() ? (
+                <>
+                  <Nav.Link href="/tasks">Tasks</Nav.Link>
+                  <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                </>
+              ) : (
+                <>
+                  <Nav.Link href="/login">Login</Nav.Link>
+                  <Nav.Link href="/register">Register</Nav.Link>
+                </>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
 
-        <Routes>
-          <Route
-            path="/login"
-            element={isAuthenticated() ? <Navigate to="/tasks" /> : <Login />}
-          />
-          <Route
-            path="/register"
-            element={isAuthenticated() ? <Navigate to="/tasks" /> : <Register />}
-          />
-          <Route
-            path="/tasks"
-            element={
-              <PrivateRoute sessionExpired={sessionExpired}>
-                <TaskList />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/"
-            element={isAuthenticated() ? <Navigate to="/tasks" /> : <Navigate to="/login" />}
-          />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route
+          path="/login"
+          element={isAuthenticated() ? <Navigate to="/tasks" /> : <Login />}
+        />
+        <Route
+          path="/register"
+          element={isAuthenticated() ? <Navigate to="/tasks" /> : <Register />}
+        />
+        <Route
+          path="/tasks"
+          element={
+            <PrivateRoute sessionExpired={sessionExpired}>
+              <TaskList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={isAuthenticated() ? <Navigate to="/tasks" /> : <Navigate to="/login" />}
+        />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
 
       {/* Session Expired Modal */}
       {sessionExpired && (

@@ -21,10 +21,8 @@ const Login = () => {
       localStorage.setItem('refresh_token', response.data.refresh);
 
       navigate('/tasks', { replace: true });
-      window.location.reload();
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        // Handle invalid credentials
         setError('Incorrect username or password.');
       } else if (error.response) {
         setError(`Login failed: ${error.response.data.detail}`);
@@ -69,6 +67,14 @@ const Login = () => {
           Login
         </Button>
       </Form>
+
+      <Button
+        variant="link"
+        onClick={() => navigate('/register')}
+        className="mt-2"
+      >
+        Don't have an account? Register here
+      </Button>
     </Container>
   );
 };

@@ -1,5 +1,3 @@
-// src/components/Register.js
-
 import React, { useState } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
@@ -19,27 +17,27 @@ const Register = () => {
     setSuccess(''); // Clear any previous success messages
 
     try {
-      const response = await api.post('/accounts/register/', { username, email, password }); // Correct endpoint
+      const response = await api.post('/accounts/register/', { username, email, password });
       setSuccess('Registration successful. You can now log in.');
       setUsername('');
       setEmail('');
       setPassword('');
 
-      // Optionally redirect to login after a delay
+      // Redirect to login after a delay
       setTimeout(() => navigate('/login'), 2000);
     } catch (error) {
       if (error.response && error.response.data) {
-        // If the backend returned validation errors, display them
         const backendError = error.response.data;
         if (backendError.error) {
           setError(backendError.error);
         } else if (backendError.password) {
           setError(backendError.password.join(' ')); // Password validation error
+        } else if (backendError.username) {
+          setError(backendError.username.join(' ')); // Username validation error
         } else {
-          setError('Username already exists. Please check your inputs.');
+          setError('Registration failed. Please check your inputs.');
         }
       } else if (error.request) {
-        // No response from the server
         setError('No response from server. Please try again later.');
       } else {
         setError('Registration failed. Please try again.');
@@ -93,6 +91,14 @@ const Register = () => {
           Register
         </Button>
       </Form>
+
+      <Button
+        variant="link"
+        onClick={() => navigate('/login')}
+        className="mt-2"
+      >
+        Already have an account?
+      </Button>
     </Container>
   );
 };
