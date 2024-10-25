@@ -1,7 +1,7 @@
 // src/components/Login.js
 
 import React, { useState } from 'react';
-import api from '../api';  // Using the configured axios instance
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 
@@ -16,14 +16,17 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await api.post('/token/', { username, password });  // Correct endpoint
+      const response = await api.post('/token/', { username, password });
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
 
       navigate('/tasks', { replace: true });
-      window.location.reload();  // Force reload to ensure the authentication state is updated
+      window.location.reload();
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        // Handle invalid credentials
+        setError('Incorrect username or password.');
+      } else if (error.response) {
         setError(`Login failed: ${error.response.data.detail}`);
       } else if (error.request) {
         setError('Login failed: No response from server.');

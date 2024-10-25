@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import api from '../api';
+import { useNavigate } from 'react-router-dom';
 
 const TaskModal = ({ show, onHide, task, fetchTasks }) => {
-  const isEditMode = !!task; // Check if in edit mode
-
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -13,6 +12,8 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
     category: '',
     state: '',
   });
+  const navigate = useNavigate();
+  const isEditMode = !!task;
 
   useEffect(() => {
     if (isEditMode && task) {
@@ -25,7 +26,6 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
         state: task.state || '',
       });
     } else {
-      // Reset form data for adding a new task
       setFormData({
         title: '',
         description: '',
@@ -37,13 +37,19 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
     }
   }, [isEditMode, task]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const checkToken = () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      window.dispatchEvent(new Event('sessionExpired'));
+      navigate('/login');
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!checkToken()) return;
 
     try {
       if (isEditMode) {
@@ -53,7 +59,6 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
         await api.post('/tasks/tasks/', formData);
         console.log('Task created successfully:', formData);
       }
-
       await fetchTasks(true);
       onHide();
     } catch (error) {
@@ -75,7 +80,7 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
               name="title"
               placeholder="Enter task title"
               value={formData.title}
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
             />
           </Form.Group>
@@ -88,7 +93,7 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
               name="description"
               placeholder="Enter task description"
               value={formData.description}
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
           </Form.Group>
 
@@ -98,7 +103,7 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
               type="date"
               name="due_date"
               value={formData.due_date}
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
               required
             />
           </Form.Group>
@@ -108,7 +113,7 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
             <Form.Select
               name="priority"
               value={formData.priority}
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
               required
             >
               <option value="">Select Priority</option>
@@ -123,7 +128,7 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
             <Form.Select
               name="category"
               value={formData.category}
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               required
             >
               <option value="">Select Category</option>
@@ -138,7 +143,7 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
             <Form.Select
               name="state"
               value={formData.state}
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, state: e.target.value })}
               required
             >
               <option value="">Select State</option>

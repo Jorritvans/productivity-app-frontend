@@ -46,6 +46,8 @@ const TaskList = () => {
   const fetchTasks = async (reset = false) => {
     setIsLoading(true);
     try {
+      if (!checkToken()) return;
+
       const config = {
         params: {
           page: reset ? 1 : page,
@@ -53,8 +55,6 @@ const TaskList = () => {
           ...filter,
         },
       };
-
-      if (!checkToken()) return;
 
       const response = await api.get('/tasks/tasks/', config);
       if (response.status === 200 && Array.isArray(response.data)) {
@@ -85,21 +85,19 @@ const TaskList = () => {
   };
 
   const handleQuickEdit = async (taskId, newState) => {
+    if (!checkToken()) return;
+
     try {
       const updatedTask = tasks.find((task) => task.id === taskId);
       if (updatedTask) {
         updatedTask.state = newState;
-
-        // Send the updated state to the backend
         await api.put(`/tasks/tasks/${taskId}/`, updatedTask);
 
-        // Update the tasks in state, only keeping the tasks that meet the filter
         if (!filter.state || filter.state === newState) {
           setTasks((prevTasks) =>
             prevTasks.map((task) => (task.id === taskId ? updatedTask : task))
           );
         } else {
-          // If the task doesn't meet the current filter criteria, remove it from the list
           setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
         }
         console.log('Task updated successfully');
@@ -107,33 +105,6 @@ const TaskList = () => {
     } catch (error) {
       console.error('Error updating task:', error.response || error.message);
     }
-  };
-
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilter((prevFilter) => {
-      if (prevFilter[name] === value) return prevFilter;
-      return { ...prevFilter, [name]: value };
-    });
-  };
-
-  const handleSearchChange = (value) => {
-    setSearch(value);
-  };
-
-  const handleShow = () => {
-    setShowModal(true);
-    setEditTask(null);
-  };
-
-  const handleEditShow = (task) => {
-    setEditTask(task);
-    setShowModal(true);
-  };
-
-  const handleEditClose = () => {
-    setShowModal(false);
-    setEditTask(null);
   };
 
   const handleDelete = async (id) => {
@@ -163,15 +134,12 @@ const TaskList = () => {
   return (
     <Container className="mt-4">
       <h2>Task List</h2>
-      {/* Add Task Button with Custom Class */}
-      <Button variant="primary" onClick={handleShow} className="mb-3 btn-custom">
+      <Button variant="primary" onClick={() => setShowModal(true)} className="mb-3 btn-custom">
         Add Task
       </Button>
 
-      {/* Task Filters */}
-      <TaskFilters setFilter={setFilter} setSearch={handleSearchChange} />
+      <TaskFilters setFilter={setFilter} setSearch={setSearch} />
 
-      {/* Infinite Scroll */}
       <InfiniteScroll
         dataLength={tasks.length}
         next={() => fetchTasks(false)}
@@ -184,16 +152,20 @@ const TaskList = () => {
             <TaskItem
               key={task.id}
               task={task}
-              onEdit={handleEditShow}
+              onEdit={(task) => {
+                if (checkToken()) {
+                  setEditTask(task);
+                  setShowModal(true);
+                }
+              }}
               onDelete={handleDelete}
-              onQuickEdit={handleQuickEdit} // Pass handleQuickEdit
+              onQuickEdit={handleQuickEdit}
             />
           ))}
         </ul>
       </InfiniteScroll>
 
-      {/* Modal for Task Operations */}
-      <TaskModal show={showModal} onHide={handleEditClose} task={editTask} fetchTasks={fetchTasks} />
+      <TaskModal show={showModal} onHide={() => setShowModal(false)} task={editTask} fetchTasks={fetchTasks} />
     </Container>
   );
 };

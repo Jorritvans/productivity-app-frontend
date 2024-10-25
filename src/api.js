@@ -1,16 +1,15 @@
 // src/api.js
 
 import axios from 'axios';
-import { toast } from 'react-toastify';
 
-const API_BASE_URL = 'https://8000-jorritvans-productivity-9zhpc5cokwg.ws.codeinstitute-ide.net/api'; // Base URL
+const API_BASE_URL = 'https://8000-jorritvans-productivity-9zhpc5cokwg.ws.codeinstitute-ide.net/api';
 
 const api = axios.create({
-  baseURL: API_BASE_URL, // Base URL
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Ensures credentials (cookies/tokens) are sent
+  withCredentials: true,
 });
 
 // Interceptor to add Authorization header
@@ -25,13 +24,18 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Handle token refresh on 401 Unauthorized
+// Handle token refresh on 401 Unauthorized, excluding login requests
 api.interceptors.response.use(
-  (response) => response, // If the response is successful, just return it
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Prevent infinite loops
+    // Bypass refresh for login endpoint
+    if (originalRequest.url.endsWith('/token/')) {
+      return Promise.reject(error);
+    }
+
+    // Handle token refresh on 401 Unauthorized
     if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -41,27 +45,19 @@ api.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
-        // Use full URL for refresh token request to handle CORS
         const { data } = await axios.post(
-          `${API_BASE_URL}/token/refresh/`, // Full URL
+          `${API_BASE_URL}/token/refresh/`,
           { refresh: refreshToken },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
+          { headers: { 'Content-Type': 'application/json' } }
         );
         localStorage.setItem('access_token', data.access);
         api.defaults.headers.Authorization = `Bearer ${data.access}`;
-        originalRequest.headers.Authorization = `Bearer ${data.access}`; // Update original request
+        originalRequest.headers.Authorization = `Bearer ${data.access}`;
         return api(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-
-        // Dispatch the sessionExpired event
         window.dispatchEvent(new Event('sessionExpired'));
-
         return Promise.reject(refreshError);
       }
     }
