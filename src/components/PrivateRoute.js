@@ -20,6 +20,7 @@ const PrivateRoute = ({ children, sessionExpired }) => {
     const decoded = jwtDecode(token); // Use jwtDecode instead of jwt_decode
     const currentTime = Date.now() / 1000;
     if (decoded.exp < currentTime) {
+      localStorage.removeItem("access_token")
       // Token has expired
       return <Navigate to="/login" />;
     }
