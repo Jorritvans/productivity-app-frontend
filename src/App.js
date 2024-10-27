@@ -11,6 +11,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Profile from './components/Profile';
 import SearchUsers from './components/SearchUsers';
 import UserTasks from './components/UserTasks';
+import FollowedTasks from './components/FollowedTasks'; // Added import
 
 function App() {
   const [sessionExpired, setSessionExpired] = useState(false);
@@ -59,6 +60,7 @@ function App() {
                   <Nav.Link href="/search">
                     <BsSearch /> Search Users
                   </Nav.Link>
+                  <Nav.Link href="/followed_tasks">Followed Tasks</Nav.Link> {/* Added link */}
                   <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                 </>
               ) : (
@@ -114,8 +116,18 @@ function App() {
           }
         />
         <Route
+          path="/followed_tasks" // Added route
+          element={
+            <PrivateRoute sessionExpired={sessionExpired}>
+              <FollowedTasks />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/"
-          element={isAuthenticated() ? <Navigate to="/tasks" /> : <Navigate to="/login" />}
+          element={
+            isAuthenticated() ? <Navigate to="/tasks" /> : <Navigate to="/login" />
+          }
         />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
