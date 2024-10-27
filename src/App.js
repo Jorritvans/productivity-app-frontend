@@ -1,11 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'; // Import useNavigate here
+// App.js
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Container, Modal, Button } from 'react-bootstrap';
 
 import Login from './components/Login';
 import Register from './components/Register';
 import TaskList from './components/TaskList';
 import PrivateRoute from './components/PrivateRoute';
+import Profile from './components/Profile';
+import SearchUsers from './components/SearchUsers';
+import UserTasks from './components/UserTasks';
 
 function App() {
   const [sessionExpired, setSessionExpired] = useState(false);
@@ -32,11 +36,11 @@ function App() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setSessionExpired(false);
-    navigate('/login', { replace: true }); // Navigate without page reload
+    navigate('/login', { replace: true });
   };
 
   const handleSessionModalClose = () => {
-    handleLogout(); // Logout and redirect to login page when the user clicks "OK"
+    handleLogout();
   };
 
   return (
@@ -50,6 +54,8 @@ function App() {
               {isAuthenticated() ? (
                 <>
                   <Nav.Link href="/tasks">Tasks</Nav.Link>
+                  <Nav.Link href="/profile">Profile</Nav.Link>
+                  <Nav.Link href="/search">Search Users</Nav.Link>
                   <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                 </>
               ) : (
@@ -77,6 +83,30 @@ function App() {
           element={
             <PrivateRoute sessionExpired={sessionExpired}>
               <TaskList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute sessionExpired={sessionExpired}>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <PrivateRoute sessionExpired={sessionExpired}>
+              <SearchUsers />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users/:owner_id/tasks"
+          element={
+            <PrivateRoute sessionExpired={sessionExpired}>
+              <UserTasks />
             </PrivateRoute>
           }
         />
