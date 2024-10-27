@@ -1,3 +1,5 @@
+// src/components/FollowedTasks.js
+
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 import { Container, Alert } from 'react-bootstrap';
@@ -28,7 +30,7 @@ const FollowedTasks = () => {
       {tasks.length > 0 ? (
         <ul className="list-group">
           {tasks.map((task) => (
-            <TaskItem key={task.id} task={task} />
+            <TaskItem key={task.id} task={task} canEdit={false} />
           ))}
         </ul>
       ) : (
