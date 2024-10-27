@@ -15,7 +15,6 @@ const SearchUsers = () => {
         const fetchUsers = async () => {
             if (query.trim() === '') {
                 setResults([]);
-                setError("Please enter a search query.");
                 return;
             }
             try {
@@ -74,7 +73,16 @@ const SearchUsers = () => {
                 </Form>
             ) : null}
 
-            {error && <p className="text-danger text-center">{error}</p>}
+            {error && (
+                <div className="text-center">
+                    <p className="text-danger">{error}</p>
+                    {/* Added the "Search Again" button here */}
+                    <Button variant="secondary" onClick={clearSearch}>
+                        🔍 Search Again
+                    </Button>
+                </div>
+            )}
+
             {results.length > 0 && (
                 <Card className="mt-4" style={{ maxWidth: '500px', margin: 'auto' }}>
                     <ListGroup variant="flush">
