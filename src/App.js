@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Container, Modal, Button } from 'react-bootstrap';
+import { BsSearch } from 'react-icons/bs'; // Importing the search icon
 
 import Login from './components/Login';
 import Register from './components/Register';
@@ -55,7 +56,9 @@ function App() {
                 <>
                   <Nav.Link href="/tasks">Tasks</Nav.Link>
                   <Nav.Link href="/profile">Profile</Nav.Link>
-                  <Nav.Link href="/search">Search Users</Nav.Link>
+                  <Nav.Link href="/search">
+                    <BsSearch /> Search Users
+                  </Nav.Link>
                   <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                 </>
               ) : (

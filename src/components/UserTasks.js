@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
-import { Container, ListGroup, Alert } from 'react-bootstrap';
+import { Container, ListGroup, Alert, Button } from 'react-bootstrap';
 
 const UserTasks = () => {
     const { owner_id } = useParams();  // Ensure it’s retrieving owner_id
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         console.log("Fetched owner_id from URL params:", owner_id);
@@ -39,9 +40,15 @@ const UserTasks = () => {
 
     return (
         <Container className="mt-4">
-            <h2>User Tasks</h2>
+            <div className="d-flex justify-content-between align-items-center">
+                <h2>User Tasks</h2>
+                {/* Button to go back to the search page */}
+                <Button variant="secondary" onClick={() => navigate('/search')}>
+                    🔍 Search Again
+                </Button>
+            </div>
             {tasks.length > 0 ? (
-                <ListGroup>
+                <ListGroup className="mt-3">
                     {tasks.map((task) => (
                         <ListGroup.Item key={task.id}>
                             <strong>{task.title}</strong>
@@ -51,7 +58,7 @@ const UserTasks = () => {
                     ))}
                 </ListGroup>
             ) : (
-                <p>This user hasn't added any tasks yet.</p>
+                <p className="mt-3">This user hasn't added any tasks yet.</p>
             )}
         </Container>
     );
