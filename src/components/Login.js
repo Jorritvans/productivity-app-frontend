@@ -17,8 +17,11 @@ const Login = () => {
 
     try {
       const response = await api.post('/token/', { username, password });
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
+      const data = response.data;
+      localStorage.setItem('access_token', data.access);
+      localStorage.setItem('refresh_token', data.refresh);
+      localStorage.setItem('user_id', data.user_id); // Store user_id
+      localStorage.setItem('username', data.username); // Store username
 
       navigate('/tasks', { replace: true });
     } catch (error) {

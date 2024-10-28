@@ -66,4 +66,17 @@ api.interceptors.response.use(
   }
 );
 
+// Add functions for comments
+export const fetchComments = (taskId) => api.get(`/comments/?task=${taskId}`);
+export const createComment = (data) => api.post('/comments/', data);
+// Update comment
+export const updateComment = (commentId, updatedData) => {
+  return api.patch(`/comments/${commentId}/`, updatedData);
+};
+
+// Delete comment
+export const deleteComment = (commentId) => {
+  return api.delete(`/comments/${commentId}/`);
+};
+
 export default api;

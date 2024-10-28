@@ -30,7 +30,7 @@ const FollowedTasks = () => {
       {tasks.length > 0 ? (
         <ul className="list-group">
           {tasks.map((task) => (
-            <TaskItem key={task.id} task={task} canEdit={false} />
+            <TaskItem key={task.id} task={task} canEdit={false} showComments={true} />
           ))}
         </ul>
       ) : (
