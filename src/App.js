@@ -1,8 +1,7 @@
-// App.js
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { Navbar, Nav, Container, Modal, Button } from 'react-bootstrap';
-import { BsSearch } from 'react-icons/bs'; // Importing the search icon
+import { Navbar, Nav, Container, Modal, Button, Badge } from 'react-bootstrap';
+import { BsSearch, BsBell } from 'react-icons/bs';
 
 import Login from './components/Login';
 import Register from './components/Register';
@@ -11,10 +10,13 @@ import PrivateRoute from './components/PrivateRoute';
 import Profile from './components/Profile';
 import SearchUsers from './components/SearchUsers';
 import UserTasks from './components/UserTasks';
-import FollowedTasks from './components/FollowedTasks'; // Added import
+import FollowedTasks from './components/FollowedTasks';
+import Notifications from './components/Notifications';
+import { fetchNotifications } from './api'; // Import notification fetcher
 
 function App() {
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
 
   const isAuthenticated = () => {
@@ -33,6 +35,20 @@ function App() {
       window.removeEventListener('sessionExpired', handleSessionExpired);
     };
   }, []);
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      if (isAuthenticated()) {
+        try {
+          const response = await fetchNotifications();
+          setNotifications(response.data);
+        } catch (error) {
+          console.error('Error loading notifications:', error);
+        }
+      }
+    };
+    loadNotifications();
+  }, [isAuthenticated()]);
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
@@ -60,7 +76,15 @@ function App() {
                   <Nav.Link href="/search">
                     <BsSearch /> Search Users
                   </Nav.Link>
-                  <Nav.Link href="/followed_tasks">Followed Tasks</Nav.Link> {/* Added link */}
+                  <Nav.Link href="/followed_tasks">Followed Tasks</Nav.Link>
+                  <Nav.Link href="/notifications">
+                    <BsBell />
+                    Notifications {notifications.length > 0 && (
+                      <Badge bg="danger" pill>
+                        {notifications.length}
+                      </Badge>
+                    )}
+                  </Nav.Link>
                   <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                 </>
               ) : (
@@ -116,10 +140,18 @@ function App() {
           }
         />
         <Route
-          path="/followed_tasks" // Added route
+          path="/followed_tasks"
           element={
             <PrivateRoute sessionExpired={sessionExpired}>
               <FollowedTasks />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <PrivateRoute sessionExpired={sessionExpired}>
+              <Notifications />
             </PrivateRoute>
           }
         />

@@ -1,8 +1,9 @@
+// src/components/TaskList.js
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../api';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Container, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import TaskModal from './TaskModal';
 import TaskFilters from './TaskFilters';
 import TaskItem from './TaskItem';
@@ -14,10 +15,13 @@ const TaskList = () => {
   const [filter, setFilter] = useState({ category: '', priority: '', state: '' });
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [editTask, setEditTask] = useState(null);
+  const [editTask, setEditTask] = useState(null); // For editing tasks
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const highlightedCommentId = location.state?.highlightCommentId || null;
+
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -131,10 +135,16 @@ const TaskList = () => {
     }
   };
 
+  // Open modal for adding a task
+  const handleAddTask = () => {
+    setEditTask(null); // Clear any task currently being edited
+    setShowModal(true);
+  };
+
   return (
     <Container className="mt-4">
       <h2>Task List</h2>
-      <Button variant="primary" onClick={() => setShowModal(true)} className="mb-3 btn-custom">
+      <Button variant="primary" onClick={handleAddTask} className="mb-3 btn-custom">
         Add Task
       </Button>
 
@@ -152,6 +162,7 @@ const TaskList = () => {
             <TaskItem
               key={task.id}
               task={task}
+              highlightedCommentId={highlightedCommentId}
               onEdit={(task) => {
                 if (checkToken()) {
                   setEditTask(task);
@@ -160,12 +171,21 @@ const TaskList = () => {
               }}
               onDelete={handleDelete}
               onQuickEdit={handleQuickEdit}
+              showComments={true} // Display comments by default for each task
             />
           ))}
         </ul>
       </InfiniteScroll>
 
-      <TaskModal show={showModal} onHide={() => setShowModal(false)} task={editTask} fetchTasks={fetchTasks} />
+      <TaskModal
+        show={showModal}
+        onHide={() => {
+          setShowModal(false);
+          setEditTask(null); // Clear edit task state on modal close
+        }}
+        task={editTask}
+        fetchTasks={fetchTasks}
+      />
     </Container>
   );
 };

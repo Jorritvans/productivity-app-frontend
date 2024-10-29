@@ -44,7 +44,6 @@ const TaskItem = ({ task, onEdit, onDelete, onQuickEdit, canEdit = true, showCom
               <span>{task.state}</span>
             )}
           </p>
-          {/* Display the owner's username if not the current user's task */}
           {!canEdit && (
             <p>
               <small className="text-muted">Owner: {task.owner}</small>
