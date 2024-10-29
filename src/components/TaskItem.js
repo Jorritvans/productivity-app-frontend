@@ -1,5 +1,3 @@
-// src/components/TaskItem.js
-
 import React, { useState } from 'react';
 import { Button, Badge, Collapse, Card } from 'react-bootstrap';
 import CommentList from './CommentList';

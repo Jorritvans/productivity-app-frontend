@@ -1,3 +1,4 @@
+// src/api.js
 import axios from 'axios';
 
 const API_BASE_URL = 'https://8000-jorritvans-productivity-9zhpc5cokwg.ws.codeinstitute-ide.net/api';
@@ -57,12 +58,12 @@ api.interceptors.response.use(
   }
 );
 
-// Add functions for comments
+// Add functions for comments and tasks
 export const fetchComments = (taskId) => api.get(`/comments/?task=${taskId}`);
 export const createComment = (data) => api.post('/comments/', data);
 export const updateComment = (commentId, updatedData) => api.patch(`/comments/${commentId}/`, updatedData);
 export const deleteComment = (commentId) => api.delete(`/comments/${commentId}/`);
-export const fetchNotifications = () => api.get('/tasks/notifications/');
-export const markNotificationAsRead = (notificationId) => api.patch(`/tasks/notifications/${notificationId}/read/`);
+export const fetchTask = (taskId) => api.get(`/tasks/${taskId}/`);
+export const fetchFollowedTasks = () => api.get('/accounts/followed_tasks/');
 
 export default api;

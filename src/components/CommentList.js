@@ -8,21 +8,26 @@ const CommentList = ({ taskId, currentUserId }) => {
   const [editContent, setEditContent] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const loadComments = async () => {
+    setIsLoading(true);
     try {
       const response = await fetchComments(taskId);
       setComments(response.data);
-      console.log("Fetched comments:", response.data);
+      console.log("Fetched comments for taskId:", taskId, response.data);
     } catch (error) {
       console.error('Error fetching comments:', error);
       setError('Failed to load comments.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    console.log("Current User ID in CommentList:", currentUserId || 'Fallback ID');
-    loadComments();
+    if (taskId) {
+      loadComments();
+    }
 
     const handleCommentsUpdated = () => {
       loadComments();
@@ -55,6 +60,9 @@ const CommentList = ({ taskId, currentUserId }) => {
   };
 
   const handleDelete = async (commentId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
+    if (!confirmDelete) return;
+
     try {
       await deleteComment(commentId);
       loadComments();
@@ -67,37 +75,39 @@ const CommentList = ({ taskId, currentUserId }) => {
   return (
     <>
       {error && <Alert variant="danger">{error}</Alert>}
-      <ListGroup variant="flush">
-        {comments.map((comment) => {
-          console.log("Comment author:", comment.author);
-          console.log("Should show buttons:", comment.author === currentUserId);
-
-          return (
-            <ListGroup.Item key={comment.id}>
-              <div className="d-flex justify-content-between">
-                <div>
-                  <strong>{comment.author_username}</strong> commented:
-                  <p>{comment.content}</p>
-                  <small className="text-muted">
-                    {new Date(comment.created_at).toLocaleString()}
-                  </small>
-                </div>
-                {comment.author === currentUserId && (
+      {isLoading ? (
+        <p>Loading comments...</p>
+      ) : (
+        <ListGroup variant="flush">
+          {comments.length > 0 ? (
+            comments.map((comment) => (
+              <ListGroup.Item key={comment.id}>
+                <div className="d-flex justify-content-between">
                   <div>
-                    <Button variant="link" onClick={() => handleEdit(comment)}>
-                      Edit
-                    </Button>
-                    <Button variant="link" onClick={() => handleDelete(comment.id)}>
-                      Delete
-                    </Button>
+                    <strong>{comment.author_username}</strong> commented:
+                    <p>{comment.content}</p>
+                    <small className="text-muted">
+                      {new Date(comment.created_at).toLocaleString()}
+                    </small>
                   </div>
-                )}
-              </div>
-            </ListGroup.Item>
-          );
-        })}
-      </ListGroup>
-
+                  {comment.author === currentUserId && (
+                    <div>
+                      <Button variant="link" onClick={() => handleEdit(comment)}>
+                        Edit
+                      </Button>
+                      <Button variant="link" onClick={() => handleDelete(comment.id)}>
+                        Delete
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </ListGroup.Item>
+            ))
+          ) : (
+            <ListGroup.Item>No comments yet.</ListGroup.Item>
+          )}
+        </ListGroup>
+      )}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Comment</Modal.Title>
@@ -110,6 +120,7 @@ const CommentList = ({ taskId, currentUserId }) => {
               rows={3}
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
+              required
             />
           </Form.Group>
         </Modal.Body>
