@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Nav, Container, Modal, Button } from 'react-bootstrap';
 import { BsSearch } from 'react-icons/bs';
 
@@ -16,11 +16,14 @@ import TaskDetail from './components/TaskDetail';
 function App() {
   const [sessionExpired, setSessionExpired] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const isAuthenticated = () => {
     const token = localStorage.getItem('access_token');
     return !!token;
   };
+
+  const isActive = (path) => location.pathname === path;
 
   useEffect(() => {
     const handleSessionExpired = () => {
@@ -55,12 +58,42 @@ function App() {
             <Nav className="ms-auto">
               {isAuthenticated() ? (
                 <>
-                  <Nav.Link href="/tasks">Tasks</Nav.Link>
-                  <Nav.Link href="/profile">Profile</Nav.Link>
-                  <Nav.Link href="/search">
+                  <Nav.Link
+                    href="/tasks"
+                    style={{
+                      textDecoration: isActive('/tasks') ? 'underline' : 'none',
+                      color: isActive('/tasks') ? 'white' : 'inherit',
+                    }}
+                  >
+                    Tasks
+                  </Nav.Link>
+                  <Nav.Link
+                    href="/profile"
+                    style={{
+                      textDecoration: isActive('/profile') ? 'underline' : 'none',
+                      color: isActive('/profile') ? 'white' : 'inherit',
+                    }}
+                  >
+                    Profile
+                  </Nav.Link>
+                  <Nav.Link
+                    href="/search"
+                    style={{
+                      textDecoration: isActive('/search') ? 'underline' : 'none',
+                      color: isActive('/search') ? 'white' : 'inherit',
+                    }}
+                  >
                     <BsSearch /> Search Users
                   </Nav.Link>
-                  <Nav.Link href="/followed_tasks">Followed Tasks</Nav.Link>
+                  <Nav.Link
+                    href="/followed_tasks"
+                    style={{
+                      textDecoration: isActive('/followed_tasks') ? 'underline' : 'none',
+                      color: isActive('/followed_tasks') ? 'white' : 'inherit',
+                    }}
+                  >
+                    Followed Tasks
+                  </Nav.Link>
                   <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                 </>
               ) : (

@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Badge, Collapse, Card } from 'react-bootstrap';
 import CommentList from './CommentList';
 import CommentForm from './CommentForm';
+import { fetchComments } from '../api';
 
 const TaskItem = ({ task, onEdit, onDelete, onQuickEdit, canEdit = true, showComments = false }) => {
   const [openComments, setOpenComments] = useState(false);
+  const [commentsCount, setCommentsCount] = useState(0);
 
   // Retrieve current user's ID from localStorage and parse it as an integer
   const currentUserId = parseInt(localStorage.getItem('user_id'), 10);
+
+  useEffect(() => {
+    // Fetch the number of comments when the component loads
+    const loadCommentsCount = async () => {
+      try {
+        const response = await fetchComments(task.id);
+        setCommentsCount(response.data.length);
+      } catch (error) {
+        console.error('Error fetching comments count:', error);
+      }
+    };
+
+    loadCommentsCount();
+  }, [task.id]);
 
   return (
     <li className="list-group-item">
@@ -73,7 +89,7 @@ const TaskItem = ({ task, onEdit, onDelete, onQuickEdit, canEdit = true, showCom
             aria-controls={`comments-${task.id}`}
             aria-expanded={openComments}
           >
-            {openComments ? 'Hide Comments' : 'Show Comments'}
+            {openComments ? 'Hide Comments' : `Show Comments (${commentsCount})`}
           </Button>
           <Collapse in={openComments}>
             <div id={`comments-${task.id}`}>
