@@ -1,13 +1,14 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+// Use environment variable for API base URL, default to a local URL if not set
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  withCredentials: true, // Include credentials for CORS requests
 });
 
 // Interceptor to add Authorization header
@@ -42,14 +43,14 @@ api.interceptors.response.use(
           { refresh: refreshToken },
           { headers: { 'Content-Type': 'application/json' } }
         );
-        localStorage.setItem('access_token', data.access);
-        api.defaults.headers.Authorization = `Bearer ${data.access}`;
-        originalRequest.headers.Authorization = `Bearer ${data.access}`;
+        localStorage.setItem('access_token', data.access); // Update access token
+        api.defaults.headers.Authorization = `Bearer ${data.access}`; // Update default authorization header
+        originalRequest.headers.Authorization = `Bearer ${data.access}`; // Retry original request with new token
         return api(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.dispatchEvent(new Event('sessionExpired'));
+        window.dispatchEvent(new Event('sessionExpired')); // Handle session expiration
         return Promise.reject(refreshError);
       }
     }
@@ -64,6 +65,7 @@ export const updateComment = (commentId, updatedData) => api.patch(`/comments/${
 export const deleteComment = (commentId) => api.delete(`/comments/${commentId}/`);
 export const fetchTask = (taskId) => api.get(`/tasks/${taskId}/`);
 export const fetchFollowedTasks = () => api.get('/accounts/followed_tasks/');
+
 export const unfollowUser = (userId) => {
   if (!userId) {
     console.error("User ID is undefined. Cannot proceed with unfollow.");
