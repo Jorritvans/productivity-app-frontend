@@ -1,17 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
-import { Container, Form, InputGroup, Button, Card, ListGroup } from 'react-bootstrap';
-import { FiX } from 'react-icons/fi';
+import { Container, Form, InputGroup, Button, Card, ListGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const SearchUsers = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [error, setError] = useState(null);
     const [searchClicked, setSearchClicked] = useState(false);
-    const navigate = useNavigate();
     const [followingIds, setFollowingIds] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
+    const navigate = useNavigate();
 
+    // Fetch current user details on component mount
+    useEffect(() => {
+        const fetchCurrentUser = async () => {
+            try {
+                const response = await api.get('/accounts/profile/');
+                setCurrentUser(response.data.user);
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+            }
+        };
+        fetchCurrentUser();
+    }, []);
+
+    // Search users based on query
     useEffect(() => {
         const fetchUsers = async () => {
             if (query.trim() === '') {
@@ -35,8 +49,8 @@ const SearchUsers = () => {
         return () => clearTimeout(delayDebounceFn);
     }, [query]);
 
+    // Fetch the list of followed users
     useEffect(() => {
-        // Fetch the list of users the current user is following
         const fetchFollowing = async () => {
             try {
                 const response = await api.get('/accounts/following/');
@@ -48,20 +62,8 @@ const SearchUsers = () => {
         fetchFollowing();
     }, []);
 
-    const handleSearch = () => {
-        if (query.trim() !== '') {
-            setSearchClicked(true);
-        }
-    };
-
-    const clearSearch = () => {
-        setQuery('');
-        setResults([]);
-        setError(null);
-        setSearchClicked(false);
-    };
-
     const handleFollow = async (userId) => {
+        if (!currentUser || currentUser.id === userId) return; // Prevent self-follow
         try {
             await api.post(`/accounts/follow/${userId}/`);
             setFollowingIds((prev) => [...prev, userId]);
@@ -90,62 +92,50 @@ const SearchUsers = () => {
                             placeholder="Search for users..."
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                            onKeyPress={(e) => e.key === 'Enter' && setSearchClicked(true)}
                             style={{ padding: '10px 15px', fontSize: '16px' }}
                         />
-                        {query && (
-                            <Button variant="outline-secondary" onClick={clearSearch}>
-                                <FiX />
-                            </Button>
-                        )}
-                        <Button type="button" variant="primary" onClick={handleSearch}>
+                        <Button type="button" variant="primary" onClick={() => setSearchClicked(true)}>
                             Search
                         </Button>
                     </InputGroup>
                 </Form>
             ) : null}
 
-            {error && (
-                <div className="text-center">
-                    <p className="text-danger">{error}</p>
-                    <Button variant="secondary" onClick={clearSearch}>
-                        🔍 Search Again
-                    </Button>
-                </div>
-            )}
+            {error && <div className="text-center text-danger">{error}</div>}
 
             {results.length > 0 && (
                 <Card className="mt-4" style={{ maxWidth: '500px', margin: 'auto' }}>
                     <ListGroup variant="flush">
                         {results.map((user) => {
                             const isFollowing = followingIds.includes(user.id);
+                            const isCurrentUser = currentUser && currentUser.id === user.id;
+
                             return (
-                                <ListGroup.Item
-                                    key={user.id}
-                                    className="d-flex justify-content-between align-items-center"
-                                >
+                                <ListGroup.Item key={user.id} className="d-flex justify-content-between align-items-center">
                                     <div
-                                        onClick={() => {
-                                            navigate(`/users/${user.id}/tasks`);
-                                        }}
+                                        onClick={() => navigate(`/users/${user.id}/tasks`)}
                                         style={{ cursor: 'pointer' }}
                                     >
                                         <strong>{user.username}</strong>
                                     </div>
-                                    {isFollowing ? (
-                                        <Button
-                                            variant="secondary"
-                                            size="sm"
-                                            onClick={() => handleUnfollow(user.id)}
+                                    {isCurrentUser ? (
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={<Tooltip>You cannot follow yourself</Tooltip>}
                                         >
+                                            <span className="d-inline-block">
+                                                <Button variant="secondary" size="sm" disabled>
+                                                    Follow
+                                                </Button>
+                                            </span>
+                                        </OverlayTrigger>
+                                    ) : isFollowing ? (
+                                        <Button variant="secondary" size="sm" onClick={() => handleUnfollow(user.id)}>
                                             Unfollow
                                         </Button>
                                     ) : (
-                                        <Button
-                                            variant="primary"
-                                            size="sm"
-                                            onClick={() => handleFollow(user.id)}
-                                        >
+                                        <Button variant="primary" size="sm" onClick={() => handleFollow(user.id)}>
                                             Follow
                                         </Button>
                                     )}

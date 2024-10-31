@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://8000-jorritvans-productivity-9zhpc5cokwg.ws.codeinstitute-ide.net/api';
+const API_BASE_URL = 'https://productivity-app-jorrit-49d8d1e48534.herokuapp.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
