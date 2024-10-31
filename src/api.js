@@ -57,23 +57,6 @@ api.interceptors.response.use(
   }
 );
 
-// Login function
-export const loginUser = async (username, password) => {
-  try {
-    const response = await api.post('/accounts/login/', { username, password });
-    const { access, refresh } = response.data;
-    
-    // Store tokens in local storage
-    localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
-    
-    return response.data; // You can return the whole response if needed
-  } catch (error) {
-    console.error('Login failed:', error);
-    throw error; // Propagate the error for further handling
-  }
-};
-
 // Add functions for comments and tasks
 export const fetchComments = (taskId) => api.get(`/comments/?task=${taskId}`);
 export const createComment = (data) => api.post('/comments/', data);
