@@ -104,7 +104,6 @@ const TaskList = () => {
         } else {
           setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
         }
-        console.log('Task updated successfully');
       }
     } catch (error) {
       console.error('Error updating task:', error.response || error.message);
@@ -120,7 +119,6 @@ const TaskList = () => {
       const response = await api.delete(`/tasks/tasks/${id}/`);
       if (response.status === 204) {
         setTasks(tasks.filter((task) => task.id !== id));
-        console.log(`Task ${id} deleted successfully`);
       } else {
         console.error(`Failed to delete task ${id}`);
       }

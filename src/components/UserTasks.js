@@ -12,7 +12,6 @@ const UserTasks = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("Fetched owner_id from URL params:", owner_id);
 
         const fetchUserTasks = async () => {
             if (!owner_id) {

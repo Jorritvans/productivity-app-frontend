@@ -54,10 +54,8 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
     try {
       if (isEditMode) {
         await api.put(`/tasks/tasks/${task.id}/`, formData);
-        console.log('Task updated successfully:', formData);
       } else {
         await api.post('/tasks/tasks/', formData);
-        console.log('Task created successfully:', formData);
       }
       await fetchTasks(true);
       onHide();

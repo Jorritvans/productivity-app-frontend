@@ -14,9 +14,6 @@ const FollowedTasks = () => {
     const fetchFollowedTasks = async () => {
       try {
         const response = await api.get('/accounts/followed_tasks/');
-        
-        console.log('Response data for followed tasks:', response.data);  // Debug log to check response structure
-
         // Group tasks by owner using owner name and ID
         const groupedTasks = response.data.reduce((acc, task) => {
           // Confirm owner_id is present in each task object
@@ -51,7 +48,6 @@ const FollowedTasks = () => {
 
   const handleUnfollow = async (ownerKey) => {
     const userId = ownerKey.split('-')[1];  // Ensure we're extracting a valid userId
-    console.log('Attempting to unfollow user with ID:', userId);  // Log user ID for confirmation
 
     if (!userId || userId === 'undefined') {
       console.error('User ID is undefined or invalid. Cannot proceed with unfollow.');
@@ -61,7 +57,6 @@ const FollowedTasks = () => {
 
     try {
       const response = await api.post(`/accounts/unfollow/${userId}/`);
-      console.log(`Successfully unfollowed user with ID: ${userId}`, response.data);  // Confirm success
 
       setTasksByOwner((prev) => {
         const updatedTasks = { ...prev };
