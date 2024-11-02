@@ -1,70 +1,136 @@
-# Getting Started with Create React App
+# Productivity App - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Productivity App is a user-friendly task management platform that enables users to organize tasks, follow other users' content, and interact through comments. Built with React, this application offers a streamlined and interactive experience for managing personal productivity and staying connected with other users.
 
-## Available Scripts
+![am i responsive](https://your-image-link-here)
 
-In the project directory, you can run:
+### Portfolio Project - Full-Stack Web Application (React & Django)
 
-### `npm start`
+The purpose of this project was to create an interactive web application using React as the frontend framework. The app is designed to help users manage tasks efficiently while promoting social interactions through following and commenting features.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Link to Application
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The live version of the application is available at:
+[Productivity App - Heroku](https://productivity-app-frontend-ea5313cc46b8.herokuapp.com)
 
-### `npm test`
+## How to Use
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+In the Productivity App, users can log in to create tasks, view followed users' tasks, and engage with others through comments. Below are the primary features:
 
-### `npm run build`
+- **Register**: Create an account to start managing tasks and engaging with other users.
+  ![register page](https://your-register-page-link)
+  
+- **Login**: Access your account to view your tasks and follow other users.
+  ![login page](https://your-login-page-link)
+  
+- **Task Management**: Add new tasks, update their status, and delete them when completed.
+  ![task management](https://your-task-page-link)
+  
+- **Follow Users**: Explore other users' tasks by following them.
+  ![follow users](https://your-follow-page-link)
+  
+- **Comments**: Engage with other users by leaving comments on their tasks.
+  ![comments](https://your-comments-page-link)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Features
+- **User Registration & Login**: Secure login and registration with JWT-based authentication.
+- **Task CRUD Functionality**: Full CRUD (Create, Read, Update, Delete) operations for managing tasks.
+- **Follow/Unfollow**: Users can follow others to view their tasks.
+- **Comments**: Add comments on tasks to interact with other users.
+- **Responsive Design**: Built using React Bootstrap for full responsiveness across devices.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Technologies Used
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Programming Languages**:
+  - JavaScript (ES6)
+  - HTML
+  - CSS
+- **Frontend Framework**:
+  - React
+- **UI Library**:
+  - React Bootstrap for responsive and consistent styling
+- **API Handling**:
+  - Axios with interceptors for managing API requests and token refresh
+- **Authentication**:
+  - JWT-based authentication managed by Axios interceptors
+- **Deployment**:
+  - Heroku
+- **Version Control**:
+  - Git, GitHub for project tracking and version control
 
-### `npm run eject`
+## UX Design & Development Decisions
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Colors & Fonts
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The app uses a neutral color palette to provide a clean and minimalistic interface. Key colors are used to highlight important actions, such as task creation and user follow/unfollow options. Fonts were chosen for readability, with an emphasis on clear hierarchy in headings and content.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Wireframes & Prototypes
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Wireframes were designed to ensure a smooth user flow and logical information hierarchy. Each section is organized for easy navigation and quick access to the primary features, such as task creation, comments, and user interactions.
 
-## Learn More
+### Accessibility
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Accessibility was a priority, with the app conforming to:
+- High color contrast ratios for readability
+- Proper ARIA labels and HTML elements for screen reader compatibility
+- Clear, user-friendly error messages and feedback mechanisms
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Reusable Components
 
-### Code Splitting
+To ensure maintainability and modularity, the app utilizes several reusable components:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **TaskItem**: Displays individual task details, with options for quick edits and deletion
+- **TaskModal**: Modal for adding and editing tasks, including form validation
+- **CommentList & CommentForm**: Modular components for viewing and adding comments to tasks
+- **FollowedTasks**: Organized display of tasks from followed users in an accordion-style layout
+- **PrivateRoute**: Handles private routing by checking if a user is authenticated
+- **ErrorBoundary**: Catches any JavaScript errors in component trees and displays fallback UI
 
-### Analyzing the Bundle Size
+## Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+The app went through extensive testing to ensure all features perform as expected, covering various test cases for CRUD operations, comments, user interactions, and API handling.
 
-### Making a Progressive Web App
+### Manual Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+The following table summarizes the tests performed on various components of the Productivity App platform:
 
-### Advanced Configuration
+| Feature                | Expected Behavior          | Result  |
+| ---------------------- |:--------------------------:| -------:|
+| Register Button        | Clicking the "Register" button opens the registration form for a new user account. | Pass |
+| Login Button           | Clicking the "Login" button opens the login form for existing users. | Pass |
+| Task Creation          | Adding a new task updates the task list and is saved in the database. | Pass |
+| Edit Task              | Editing a task reflects changes immediately on the frontend. | Pass |
+| Delete Task            | Deleting a task removes it from the task list and database. | Pass |
+| Follow User            | Clicking "Follow" allows users to follow other users. | Pass |
+| Unfollow User          | Clicking "Unfollow" removes users from the followed list. | Pass |
+| Comment on Task        | Adding a comment shows it below the task details. | Pass |
+| Edit Comment           | Editing a comment updates it on the task detail page. | Pass |
+| Delete Comment         | Deleting a comment removes it from the task detail page. | Pass |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Validation
 
-### Deployment
+- **HTML Validation**: Passed through W3C HTML Validator with no significant errors.
+- **CSS Validation**: Passed through W3C CSS Validator with no significant errors.
+- **JavaScript Validation**: Validated using ESLint with adjustments made to ensure compatibility with ES6.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Deployment
 
-### `npm run build` fails to minify
+This project was deployed using Heroku.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Steps for Deployment
+1. Clone this repository.
+2. Install all dependencies.
+3. Create a Heroku app.
+4. Link the Heroku app to your repository.
+5. Set environment variables in Heroku for secure access to API and authentication tokens.
+6. Deploy the application.
+
+## Credits
+
+- **Development**: Created by [Jorrit Vanstraelen]
+- **Documentation**: Code Institute resources and documentation for deployment guidelines.
+- **Inspiration**: Guided by various React and Django tutorials and documentation.
+
+## Acknowledgements
+
+Special thanks to my mentor for providing guidance throughout the development of this project.
