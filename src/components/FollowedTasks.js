@@ -1,5 +1,3 @@
-// src/components/FollowedTasks.js
-
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 import { Container, Alert, Button } from 'react-bootstrap';
@@ -18,7 +16,6 @@ const FollowedTasks = () => {
         const groupedTasks = response.data.reduce((acc, task) => {
           // Confirm owner_id is present in each task object
           if (!task.owner_id) {
-            console.error('Missing owner_id for task:', task);
             return acc;
           }
 
@@ -32,7 +29,6 @@ const FollowedTasks = () => {
 
         setTasksByOwner(groupedTasks);
       } catch (error) {
-        console.error('Error fetching followed tasks:', error);
         setError('Error fetching followed tasks.');
       }
     };
@@ -50,7 +46,6 @@ const FollowedTasks = () => {
     const userId = ownerKey.split('-')[1];  // Ensure we're extracting a valid userId
 
     if (!userId || userId === 'undefined') {
-      console.error('User ID is undefined or invalid. Cannot proceed with unfollow.');
       setError('Error: Invalid user ID.');
       return;
     }
@@ -64,7 +59,6 @@ const FollowedTasks = () => {
         return updatedTasks;
       });
     } catch (error) {
-      console.error('Error unfollowing user:', error);
       setError('Error unfollowing user.');
     }
   };

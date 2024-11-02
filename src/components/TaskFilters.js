@@ -5,7 +5,7 @@ const TaskFilters = ({ setFilter, setSearch }) => {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilter((prevFilter) => {
-      if (prevFilter[name] === value) return prevFilter; // No change
+      if (prevFilter[name] === value) return prevFilter;
       return { ...prevFilter, [name]: value };
     });
   };

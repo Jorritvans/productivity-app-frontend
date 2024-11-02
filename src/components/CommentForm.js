@@ -1,5 +1,3 @@
-// src/components/CommentForm.js
-
 import React, { useState } from 'react';
 import { createComment } from '../api';
 import { Form, Button, Alert } from 'react-bootstrap';
@@ -17,8 +15,7 @@ const CommentForm = ({ taskId }) => {
       setContent('');
       // Trigger a reload of comments by dispatching a custom event
       window.dispatchEvent(new Event('commentsUpdated'));
-    } catch (error) {
-      console.error('Error creating comment:', error);
+    } catch {
       setError('Failed to add comment. Please try again.');
     }
   };

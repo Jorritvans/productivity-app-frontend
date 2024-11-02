@@ -18,9 +18,7 @@ const SearchUsers = () => {
             try {
                 const response = await api.get('/accounts/profile/');
                 setCurrentUser(response.data.user);
-            } catch (error) {
-                console.error('Error fetching current user:', error);
-            }
+            } catch (error) {}
         };
         fetchCurrentUser();
     }, []);
@@ -55,9 +53,7 @@ const SearchUsers = () => {
             try {
                 const response = await api.get('/accounts/following/');
                 setFollowingIds(response.data.map((user) => user.id));
-            } catch (error) {
-                console.error('Error fetching following list:', error);
-            }
+            } catch (error) {}
         };
         fetchFollowing();
     }, []);
@@ -67,18 +63,14 @@ const SearchUsers = () => {
         try {
             await api.post(`/accounts/follow/${userId}/`);
             setFollowingIds((prev) => [...prev, userId]);
-        } catch (error) {
-            console.error('Error following user:', error);
-        }
+        } catch (error) {}
     };
 
     const handleUnfollow = async (userId) => {
         try {
             await api.post(`/accounts/unfollow/${userId}/`);
             setFollowingIds((prev) => prev.filter((id) => id !== userId));
-        } catch (error) {
-            console.error('Error unfollowing user:', error);
-        }
+        } catch (error) {}
     };
 
     return (

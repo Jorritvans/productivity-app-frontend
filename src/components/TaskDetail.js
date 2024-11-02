@@ -1,7 +1,6 @@
-// src/components/TaskDetail.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchComments, fetchTask } from '../api'; // Make sure you have a fetchTask function
+import { fetchComments, fetchTask } from '../api';
 import CommentForm from './CommentForm';
 import { ListGroup, Badge, Container } from 'react-bootstrap';
 
@@ -14,13 +13,12 @@ const TaskDetail = () => {
   useEffect(() => {
     const loadTaskDetails = async () => {
       try {
-        const taskResponse = await fetchTask(taskId); // Assuming you have this API endpoint
+        const taskResponse = await fetchTask(taskId);
         setTask(taskResponse.data);
 
         const commentsResponse = await fetchComments(taskId);
         setComments(commentsResponse.data);
       } catch (error) {
-        console.error('Error loading task details:', error);
         setError('Failed to load task details.');
       }
     };

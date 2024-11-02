@@ -15,9 +15,7 @@ const CommentList = ({ taskId, currentUserId }) => {
     try {
       const response = await fetchComments(taskId);
       setComments(response.data);
-      console.log("Fetched comments for taskId:", taskId, response.data);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
+    } catch {
       setError('Failed to load comments.');
     } finally {
       setIsLoading(false);
@@ -53,8 +51,7 @@ const CommentList = ({ taskId, currentUserId }) => {
       setEditingComment(null);
       setEditContent('');
       loadComments();
-    } catch (error) {
-      console.error('Error updating comment:', error);
+    } catch {
       setError('Failed to update comment.');
     }
   };
@@ -66,8 +63,7 @@ const CommentList = ({ taskId, currentUserId }) => {
     try {
       await deleteComment(commentId);
       loadComments();
-    } catch (error) {
-      console.error('Error deleting comment:', error);
+    } catch {
       setError('Failed to delete comment.');
     }
   };

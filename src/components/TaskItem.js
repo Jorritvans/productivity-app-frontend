@@ -18,7 +18,7 @@ const TaskItem = ({ task, onEdit, onDelete, onQuickEdit, canEdit = true, showCom
         const response = await fetchComments(task.id);
         setCommentsCount(response.data.length);
       } catch (error) {
-        console.error('Error fetching comments count:', error);
+        setCommentsCount(0); // Handle the error by setting commentsCount to 0
       }
     };
 

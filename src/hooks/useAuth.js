@@ -1,5 +1,3 @@
-// src/hooks/UseAuth.js
-
 import { useState, useEffect, useCallback } from 'react';
 import jwt_decode from 'jwt-decode';
 import api from '../api';
@@ -19,7 +17,6 @@ const useAuth = () => {
           setIsAuthenticated(true);
         }
       } catch (error) {
-        console.error('Token decoding failed:', error);
         setIsAuthenticated(false);
       }
     } else {
@@ -31,11 +28,10 @@ const useAuth = () => {
     const refresh = localStorage.getItem('refresh_token');
     if (refresh) {
       try {
-        const response = await api.post('/api/token/refresh/', { refresh }); // Correct endpoint
+        const response = await api.post('/api/token/refresh/', { refresh });
         localStorage.setItem('access_token', response.data.access);
         setIsAuthenticated(true);
       } catch (error) {
-        console.error('Token refresh failed:', error);
         setIsAuthenticated(false);
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');

@@ -1,4 +1,3 @@
-// src/components/ErrorBoundary.js
 import React, { Component } from 'react';
 
 class ErrorBoundary extends Component {
@@ -12,7 +11,6 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error) {
-    console.error('Error caught by ErrorBoundary:', error);
     if (error.message.includes('Maximum update depth exceeded')) {
       window.dispatchEvent(new Event('sessionExpired'));
     }

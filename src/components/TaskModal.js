@@ -60,7 +60,7 @@ const TaskModal = ({ show, onHide, task, fetchTasks }) => {
       await fetchTasks(true);
       onHide();
     } catch (error) {
-      console.error('Error saving task:', error.response?.data || error.message);
+      // Handle error silently
     }
   };
 

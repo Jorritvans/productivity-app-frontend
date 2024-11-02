@@ -1,4 +1,3 @@
-// src/components/TaskList.js
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../api';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -74,11 +73,8 @@ const TaskList = () => {
           setPage((prevPage) => prevPage + 1);
           setHasMore(uniqueTasks.length > 0);
         }
-      } else {
-        console.error('Unexpected response structure:', response.data);
       }
     } catch (error) {
-      console.error('Error fetching tasks:', error.response || error.message);
       if (error.response && error.response.status === 401) {
         window.dispatchEvent(new Event('sessionExpired'));
         navigate('/login');
@@ -106,7 +102,7 @@ const TaskList = () => {
         }
       }
     } catch (error) {
-      console.error('Error updating task:', error.response || error.message);
+      // Handle task update error silently
     }
   };
 
@@ -119,11 +115,8 @@ const TaskList = () => {
       const response = await api.delete(`/tasks/tasks/${id}/`);
       if (response.status === 204) {
         setTasks(tasks.filter((task) => task.id !== id));
-      } else {
-        console.error(`Failed to delete task ${id}`);
       }
     } catch (error) {
-      console.error('Error deleting task:', error.response?.data || error.message);
       if (error.response && error.response.status === 401) {
         window.dispatchEvent(new Event('sessionExpired'));
         navigate('/login');

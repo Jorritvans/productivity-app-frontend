@@ -68,7 +68,6 @@ export const fetchFollowedTasks = () => api.get('/accounts/followed_tasks/');
 
 export const unfollowUser = (userId) => {
   if (!userId) {
-    console.error("User ID is undefined. Cannot proceed with unfollow.");
     return;
   }
   return api.post(`/accounts/unfollow/${userId}/`);
@@ -77,7 +76,6 @@ export const unfollowUser = (userId) => {
 // New followUser function
 export const followUser = (userId) => {
   if (!userId) {
-    console.error("User ID is undefined. Cannot proceed with follow.");
     return;
   }
   return api.post(`/accounts/follow/${userId}/`);

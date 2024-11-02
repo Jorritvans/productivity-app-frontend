@@ -1,8 +1,6 @@
-// src/components/PrivateRoute.js
-
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Named import
+import { jwtDecode } from 'jwt-decode';
 
 const PrivateRoute = ({ children, sessionExpired }) => {
   const token = localStorage.getItem('access_token');
@@ -17,15 +15,14 @@ const PrivateRoute = ({ children, sessionExpired }) => {
   }
 
   try {
-    const decoded = jwtDecode(token); // Use jwtDecode instead of jwt_decode
+    const decoded = jwtDecode(token);
     const currentTime = Date.now() / 1000;
     if (decoded.exp < currentTime) {
-      localStorage.removeItem("access_token")
+      localStorage.removeItem("access_token");
       // Token has expired
       return <Navigate to="/login" />;
     }
   } catch (error) {
-    console.error('Token decoding failed:', error);
     return <Navigate to="/login" />;
   }
 

@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api, { followUser, unfollowUser } from '../api'; // Ensure follow/unfollow functions are imported
+import api, { followUser, unfollowUser } from '../api';
 import { Container, ListGroup, Alert, Button } from 'react-bootstrap';
 
 const UserTasks = () => {
-    const { owner_id } = useParams(); // Ensure it’s retrieving owner_id
+    const { owner_id } = useParams();
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isFollowing, setIsFollowing] = useState(false); // New state for follow status
+    const [isFollowing, setIsFollowing] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
 
         const fetchUserTasks = async () => {
             if (!owner_id) {
-                console.error('owner_id is undefined or null, cannot fetch tasks.');
                 setError('User ID is invalid.');
                 setLoading(false);
                 return;
@@ -23,10 +22,9 @@ const UserTasks = () => {
             try {
                 const response = await api.get(`/accounts/${owner_id}/tasks/`);
                 setTasks(response.data.tasks || response.data);
-                setIsFollowing(response.data.is_following); // Set initial follow status if available
+                setIsFollowing(response.data.is_following);
                 setError(null);
             } catch (error) {
-                console.error('Error fetching user tasks:', error);
                 setError('Error fetching user tasks.');
             } finally {
                 setLoading(false);
@@ -46,7 +44,6 @@ const UserTasks = () => {
                 setIsFollowing(true);
             }
         } catch (error) {
-            console.error('Error updating follow status:', error);
             setError('Error updating follow status.');
         }
     };
