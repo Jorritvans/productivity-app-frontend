@@ -13,31 +13,49 @@ The purpose of this project was to create an interactive web application using R
 The live version of the application is available at:
 [Productivity App - Heroku](https://productivity-app-frontend-ea5313cc46b8.herokuapp.com)
 
+## Link to User Stories
+
+For details on the project goals, user stories, and development progress, please visit the [Projects Section on GitHub](https://github.com/users/Jorritvans/projects/4).
+
 ## How to Use
 
 In the Productivity App, users can log in to create tasks, view followed users' tasks, and engage with others through comments. Below are the primary features:
 
 - **Register**: Create an account to start managing tasks and engaging with other users.
-  ![register page](https://your-register-page-link)
+  ![![Register](https://github.com/user-attachments/assets/355d46de-e972-4643-94d6-745c852eda7c)
+]
   
 - **Login**: Access your account to view your tasks and follow other users.
-  ![login page](https://your-login-page-link)
+  ![![login](https://github.com/user-attachments/assets/1eec72dc-8c6a-4e93-baf2-7e964787a2f9)
+]
   
 - **Task Management**: Add new tasks, update their status, and delete them when completed.
-  ![task management](https://your-task-page-link)
+  ![![tasks](https://github.com/user-attachments/assets/70ac53b3-7fc1-42c4-adef-4ed969fe911a)
+]
   
 - **Follow Users**: Explore other users' tasks by following them.
-  ![follow users](https://your-follow-page-link)
+  ![![follow](https://github.com/user-attachments/assets/24224af1-694c-4659-9d62-4a6717ab48c8)
+]
   
 - **Comments**: Engage with other users by leaving comments on their tasks.
-  ![comments](https://your-comments-page-link)
+  ![![comments](https://github.com/user-attachments/assets/188c9f96-bceb-41be-b58a-76ca21eef86b)
+]
 
 ## Features
+
+The frontend of Productivity App provides several core features:
+
 - **User Registration & Login**: Secure login and registration with JWT-based authentication.
 - **Task CRUD Functionality**: Full CRUD (Create, Read, Update, Delete) operations for managing tasks.
-- **Follow/Unfollow**: Users can follow others to view their tasks.
+- **Follow/Unfollow** (Account Endpoints): Users can follow others to view their tasks.
 - **Comments**: Add comments on tasks to interact with other users.
+- **Filtering**: Users can filter tasks by priority, category, and state.
 - **Responsive Design**: Built using React Bootstrap for full responsiveness across devices.
+
+### Potential Future Enhancements
+
+- **Notification System**: Notify users when they receive new comments or when followed users update tasks.
+- **Task Owner Comment Management**: Allow task owners to delete comments made by others on their tasks.
 
 ## Technologies Used
 
@@ -112,13 +130,15 @@ The following table summarizes the tests performed on various components of the 
 - **HTML Validation**: Passed through W3C HTML Validator with no significant errors.
 - **CSS Validation**: Passed through W3C CSS Validator with no significant errors.
 - **JavaScript Validation**: Validated using ESLint with adjustments made to ensure compatibility with ES6.
+- **Lighthouse Test**: [![productivity-app-lighthouse](https://github.com/user-attachments/assets/2aef6326-ec3c-4a2e-aebd-d4971262739f)
+]
 
 ## Deployment
 
 This project was deployed using Heroku.
 
 ### Steps for Deployment
-1. Clone this repository.
+1. Clone this repository from [GitHub - Productivity-app-frontend](https://github.com/Jorritvans/Productivity-app-frontend).
 2. Install all dependencies.
 3. Create a Heroku app.
 4. Link the Heroku app to your repository.
@@ -127,9 +147,13 @@ This project was deployed using Heroku.
 
 ## Credits
 
-- **Development**: Created by [Jorrit Vanstraelen]
+- **Development**: Created by [Jorrit Vanstraelen](https://github.com/Jorritvans)
 - **Documentation**: Code Institute resources and documentation for deployment guidelines.
-- **Inspiration**: Guided by various React and Django tutorials and documentation.
+- **Inspiration**: From Code Institute's Project ideas.
+
+## Advice and Experience
+I had a lot of struggles splitting up the repositories and keeping all functionality, and this is also why the frontend has fewer commits than the backend, as I had split it when the project was already working.
+Splitting up the TaskList.js after the switch was also not easy so i would recommend always splitting up files as much as possible when using React.
 
 ## Acknowledgements
 
