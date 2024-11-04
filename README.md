@@ -22,24 +22,24 @@ For details on the project goals, user stories, and development progress, please
 In the Productivity App, users can log in to create tasks, view followed users' tasks, and engage with others through comments. Below are the primary features:
 
 - **Register**: Create an account to start managing tasks and engaging with other users.
-  ![![Register](https://github.com/user-attachments/assets/355d46de-e972-4643-94d6-745c852eda7c)
-]
+  ![Register](https://github.com/user-attachments/assets/355d46de-e972-4643-94d6-745c852eda7c)
+
   
 - **Login**: Access your account to view your tasks and follow other users.
-  ![![login](https://github.com/user-attachments/assets/1eec72dc-8c6a-4e93-baf2-7e964787a2f9)
-]
+  ![login](https://github.com/user-attachments/assets/1eec72dc-8c6a-4e93-baf2-7e964787a2f9)
+
   
 - **Task Management**: Add new tasks, update their status, and delete them when completed.
-  ![![tasks](https://github.com/user-attachments/assets/70ac53b3-7fc1-42c4-adef-4ed969fe911a)
-]
+  ![tasks](https://github.com/user-attachments/assets/70ac53b3-7fc1-42c4-adef-4ed969fe911a)
+
   
 - **Follow Users**: Explore other users' tasks by following them.
-  ![![follow](https://github.com/user-attachments/assets/24224af1-694c-4659-9d62-4a6717ab48c8)
-]
+  ![follow](https://github.com/user-attachments/assets/24224af1-694c-4659-9d62-4a6717ab48c8)
+
   
 - **Comments**: Engage with other users by leaving comments on their tasks.
-  ![![comments](https://github.com/user-attachments/assets/188c9f96-bceb-41be-b58a-76ca21eef86b)
-]
+  ![comments](https://github.com/user-attachments/assets/188c9f96-bceb-41be-b58a-76ca21eef86b)
+
 
 ## Features
 
