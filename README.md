@@ -129,6 +129,8 @@ The following table summarizes the tests performed on various components of the 
 
 - **HTML Validation**: Passed through W3C HTML Validator with no significant errors.
 - **CSS Validation**: Passed through W3C CSS Validator with no significant errors.
+  ![css](https://github.com/user-attachments/assets/003709c3-33c3-43f4-83e3-ee6264415ea5)
+  
 - **JavaScript Validation**: Validated using ESLint with adjustments made to ensure compatibility with ES6.
 - **Lighthouse Test**: [![productivity-app-lighthouse](https://github.com/user-attachments/assets/2aef6326-ec3c-4a2e-aebd-d4971262739f)
 ]
