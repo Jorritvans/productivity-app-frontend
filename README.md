@@ -82,10 +82,6 @@ The frontend of Productivity App provides several core features:
 
 The app uses a neutral color palette to provide a clean and minimalistic interface. Key colors are used to highlight important actions, such as task creation and user follow/unfollow options. Fonts were chosen for readability, with an emphasis on clear hierarchy in headings and content.
 
-### Wireframes & Prototypes
-
-Wireframes were designed to ensure a smooth user flow and logical information hierarchy. Each section is organized for easy navigation and quick access to the primary features, such as task creation, comments, and user interactions.
-
 ### Accessibility
 
 Accessibility was a priority, with the app conforming to:
